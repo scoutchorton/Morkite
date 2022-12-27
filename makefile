@@ -12,9 +12,9 @@ NAME = morkite
 #Language used (C or C++)
 LANG = C++
 #Flags for gcc/g++
-FLAGS := -Wall -c
+FLAGS := -Wall ${shell pkg-config lua sdl2 --cflags}
 #Libraries that the program uses
-LIBS :=
+LIBS := ${shell pkg-config lua sdl2 --libs}
 #Flags for gcc/g++ when compiling for debug
 DEBUG_FLAGS = -ggdb
 # Compilers
