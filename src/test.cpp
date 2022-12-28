@@ -1,12 +1,15 @@
 #include <iostream>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <lua5.4/lua.h>
 #include <lua5.4/lualib.h>
 #include <lua5.4/lauxlib.h>
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
+#define FPS 30 // Frames Per Second
+#define TPF 1000 / FPS // Ticks Per Frame
 
 /*
 Resources
@@ -64,19 +67,23 @@ int setWindowTitle_L(lua_State* Lua) {
 	SDL_SetWindowTitle(window, windowNameArg);
 
 	// Lua return thing
-	//lua_pushnil(Lua);
+	lua_pushnil(Lua);
 
-	return 0;
+	return 1;
 }
 
 int main(int argc, char** argv) {
 	lua_State* Lua;
 	SDL_Surface* surface = NULL;
+	SDL_Surface* spriteSheet = NULL;
+	SDL_Rect spriteSheetClip[6];
+	SDL_Rect centerRect;
 	bool quit = false;
 	Uint8 red = 0;
 	SDL_Event e;
 
 	int hasRunLua = 0;
+	int animationFrame = 0;
 
 	// Initialization
 	window = initSDL();
@@ -85,7 +92,21 @@ int main(int argc, char** argv) {
 	// Handle test drawing
 	surface = SDL_GetWindowSurface(window);
 
-	luaL_dofile(Lua, "./src/test.lua");
+	// Load in the sprite data
+	spriteSheet = IMG_Load("./assets/test_character/walk_transparent.png");
+	for(int i = 0; i < 6; i++) {
+		spriteSheetClip[i] = {
+			.x = (i * 300), .y = 0,
+			.w = 300, .h = 300
+		};
+	}
+
+	centerRect = {
+		.x = (SCREEN_WIDTH / 2) - (300 / 2), .y = (SCREEN_HEIGHT / 2) - (300 / 2),
+		.w = SCREEN_WIDTH, .h = SCREEN_HEIGHT
+	};
+
+	//luaL_dofile(Lua, "./src/test.lua");
 
 	// Wait for quit command from user
 	while(quit == false) {
@@ -97,14 +118,18 @@ int main(int argc, char** argv) {
 
 		red++;
 		hasRunLua++;
+		animationFrame++;
 
 		// Game logic
-		if(hasRunLua == 100000)
+		if(hasRunLua == 255/4)
 			luaL_dofile(Lua, "./src/test.lua");
 
 		// Drawing logic
 		SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, red, 0, 0));
+		SDL_BlitSurface(spriteSheet, &spriteSheetClip[animationFrame % 3 + 3], surface, &centerRect);
 		SDL_UpdateWindowSurface(window);
+
+		SDL_Delay(100);
 	}
 
 	quitSDL(window);

@@ -12,9 +12,9 @@ NAME = morkite
 #Language used (C or C++)
 LANG = C++
 #Flags for gcc/g++
-FLAGS := -Wall ${shell pkg-config lua sdl2 --cflags} ${CFLAGS}
+FLAGS := -Wall ${shell pkg-config lua sdl2 SDL2_image --cflags} ${CFLAGS}
 #Libraries that the program uses
-LIBS := ${shell pkg-config lua sdl2 --libs}
+LIBS := ${shell pkg-config lua sdl2 SDL2_image --libs}
 #Flags for gcc/g++ when compiling for debug
 DEBUG_FLAGS = -ggdb
 # Compilers
@@ -102,8 +102,6 @@ ${BINDIR}/${NAME}: obj ${OBJ} bin
 
 #Compile each file to an object
 ${OBJ}: $${dir $$@} $${wildcard $${foreach EXT,$${EXTS},$${patsubst $${OBJDIR}%.o,$${SRCDIR}%.$${EXT},$$@}}}
-	@echo 'Flags: ' ${FLAGS}
-	@echo 'CFlags: ' ${CFLAGS}
 	@echo "${call repeat, ,${words ${subst /, ,${patsubst %/, ,$@}}}} [OBJ] [${call index,$@,${OBJ}}/${words ${OBJ}}] ${notdir $@}"
 	${CC} -c ${FLAGS} -o $@ ${filter-out $<,$^} ${LIBS}
 

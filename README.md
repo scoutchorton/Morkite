@@ -27,3 +27,7 @@ A pocket monster type game engine and implementation using C++, Lua, and SDL.
    ```bash
    CFLAGS='-I/mingw64/include/' make
    ```
+
+
+
+@todo add SDL2-image to instrcutions
