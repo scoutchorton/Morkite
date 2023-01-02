@@ -12,7 +12,8 @@ A pocket monster type game engine and implementation using C++, Lua, and SDL.
 
    ```bash
    sudo apt update
-   sudo apt install git build-essential pkg-config lua5.4 liblua5.4-0 liblua5.4-0-dbg liblua5.4-dev libsdl2-2.0-0 libsdl2-dev libsdl2-image-2.0-0 libsdl2-image-dev
+   #sudo apt install git build-essential pkg-config lua5.4 liblua5.4-0 liblua5.4-0-dbg liblua5.4-dev libsdl2-2.0-0 libsdl2-dev libsdl2-image-2.0-0 libsdl2-image-dev
+   sudo apt install git build-essential cmake lua5.4 liblua5.4-0 liblua5.4-0-dbg liblua5.4-dev libsdl2-2.0-0 libsdl2-dev libsdl2-image-2.0-0 libsdl2-image-dev
    ```
 
 1. Clone the repository
@@ -25,7 +26,8 @@ A pocket monster type game engine and implementation using C++, Lua, and SDL.
 1. Compile the project
 
    ```bash
-   make
+   mkdir build
+   cmake ../
    ```
 
 ## Windows

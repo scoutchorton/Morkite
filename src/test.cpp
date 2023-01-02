@@ -2,9 +2,9 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <lua5.4/lua.h>
-#include <lua5.4/lualib.h>
-#include <lua5.4/lauxlib.h>
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
