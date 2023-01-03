@@ -1,10 +1,11 @@
 #include <iostream>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
+#include "SDL.h"
+#include "SDL_image.h"
+#include "lua.hpp"
+//#include "lua.h"
+//#include "lualib.h"
+//#include "lauxlib.h"
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -96,14 +97,18 @@ int main(int argc, char** argv) {
 	spriteSheet = IMG_Load("./assets/test_character/walk_transparent.png");
 	for(int i = 0; i < 6; i++) {
 		spriteSheetClip[i] = {
-			.x = (i * 300), .y = 0,
-			.w = 300, .h = 300
+			(i * 300),
+			0,
+			300,
+			300
 		};
 	}
 
 	centerRect = {
-		.x = (SCREEN_WIDTH / 2) - (300 / 2), .y = (SCREEN_HEIGHT / 2) - (300 / 2),
-		.w = SCREEN_WIDTH, .h = SCREEN_HEIGHT
+		(SCREEN_WIDTH / 2) - (300 / 2),
+		(SCREEN_HEIGHT / 2) - (300 / 2),
+		SCREEN_WIDTH,
+		SCREEN_HEIGHT
 	};
 
 	//luaL_dofile(Lua, "./src/test.lua");
