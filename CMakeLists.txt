@@ -38,7 +38,7 @@ if(MSVC)
 		BUILD_BYPRODUCTS <SOURCE_DIR>/lua54.dll <SOURCE_DIR>/lua54.lib
 	)
 	ExternalProject_Get_property(lua SOURCE_DIR)
-	set(LUA_INCLUDE_DIRS "${SOURCE_DIR}/include")
+	set(LUA_INCLUDE_DIR "${SOURCE_DIR}/include")
 	set(LUA_LIBRARIES "${SOURCE_DIR}/lua54.lib")
 	list(APPEND dlls "${SOURCE_DIR}/lua54.dll")
 
@@ -70,7 +70,7 @@ if(MSVC)
 	set(SDL2_IMAGE_LIBRARIES "${SOURCE_DIR}/lib/${SDL2_ARCH}/SDL2_image.lib")
 	list(APPEND dlls "${SOURCE_DIR}/lib/${SDL2_ARCH}/SDL2_image.dll")
 else()
-	include("${CMAKE_SOURCE_DIR}/cmake/FindSDL2_image.cmake")
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 	# Find libraries
 	find_package(SDL2 REQUIRED)
@@ -80,8 +80,10 @@ endif()
 
 # Compile project
 add_executable(morkite)
-add_dependencies(morkite lua sdl2 sdl2_image)
-include_directories(morkite ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${LUA_INCLUDE_DIRS})
+if(MSVC)
+	add_dependencies(morkite lua sdl2 sdl2_image)
+endif()
+include_directories(morkite ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
 target_link_libraries(morkite ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${LUA_LIBRARIES})
 target_sources(morkite PUBLIC ${CPP_SOURCES})
 
