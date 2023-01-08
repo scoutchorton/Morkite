@@ -15,7 +15,7 @@ include(ExternalProject)
 file(GLOB CPP_SOURCES "src/*.cpp")
 
 # Packages
-if(MSVC)
+if(WIN32)
 	# Architecture specific values
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		set(LUA_DL_ARCH "Win64")
@@ -71,6 +71,7 @@ if(MSVC)
 	list(APPEND dlls "${SOURCE_DIR}/lib/${SDL2_ARCH}/SDL2_image.dll")
 else()
 	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+	include("${CMAKE_SOURCE_DIR}/cmake/FindSDL2_image.cmake")
 
 	# Find libraries
 	find_package(SDL2 REQUIRED)
@@ -80,10 +81,10 @@ endif()
 
 # Compile project
 add_executable(morkite)
-if(MSVC)
+if(WIN32)
 	add_dependencies(morkite lua sdl2 sdl2_image)
 endif()
-include_directories(morkite ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
+include_directories(morkite ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${LUA_INCLUDE_DIRS})
 target_link_libraries(morkite ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${LUA_LIBRARIES})
 target_sources(morkite PUBLIC ${CPP_SOURCES})
 

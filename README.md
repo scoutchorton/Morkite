@@ -56,7 +56,8 @@ _**@todo** add install target in CMake_
 
    ```bash
    pacman -Syu
-   pacman -S git gcc make pkg-config mingw-w64-$(uname -m)-lua mingw-w64-$(uname -m)-SDL2
+   pacman -Sy
+   pacman -S git mingw-w64-$(uname -m)-cmake mingw-w64-$(uname -m)-clang
    ```
 
 1. Clone the repository
@@ -69,5 +70,8 @@ _**@todo** add install target in CMake_
 1. Compile the project
 
    ```bash
-   CFLAGS='-I/mingw64/include/' make
+   mkdir build
+   cd build
+   cmake ../
+   ninja # @todo still doesn't work
    ```
