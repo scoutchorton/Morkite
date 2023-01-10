@@ -152,3 +152,13 @@ _**@todo** make list, for now see [planning section](#planning) for list of thin
 ### Issues
 
 - [ ] Finish/fix issues with MinGW (can't link to libraries or something like that)
+
+### Future
+
+- [ ] Store game information in separate file, like Doom's WAD files
+  - [ ] Create game package information (like a Node.js `package.json` file)
+  - [ ] Include extra utilities for managing game contents (probably in Lua or Python, TBD)
+  - [ ] Migrate current game assets and scripts to new format
+- [ ] Add online capabilities
+  - [ ] Move server side to separate project?
+  - [ ] Determine level of involvement (only a link/trading system or some item market, or all the way up to MMO type stuff)
