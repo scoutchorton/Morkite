@@ -93,8 +93,8 @@ A pocket monster type game engine and implementation using C++, Lua, and SDL.
   - [ ] Linux (source)
   - [ ] Windows (Visual Studio)
     - [ ] Installing Visual Studio
-  - [x] Windows (MinGW)
-    - [x] Extra steps for MSYS2/MinGW?
+  - [ ] Windows (MinGW)
+    - [ ] Extra steps for MSYS2/MinGW?
   - [ ] macOS (through Homebrew)
 
 ### Planning
@@ -125,7 +125,8 @@ _See files in [planning directory](./planning/)_
 
 - [ ] Compiling
   - [x] Linux
-  - [x] Windows
+  - [x] Windows (Visual Studio)
+  - [ ] Windows (MinGW)
   - [ ] macOS
 - [ ] Packaging/Installers
   - [x] Linux (dpkg)
@@ -139,7 +140,6 @@ _See files in [planning directory](./planning/)_
   - [ ] Linux
   - [ ] Windows
   - [ ] macOS
-- [ ] Finish/fix issues with MinGW (can't link to libraries or something like that)
 
 ### Engine
 
@@ -148,3 +148,7 @@ _**@todo** make list, for now see [planning section](#planning) for list of thin
 ### Game content
 
 _**@todo** make list, for now see [planning section](#planning) for list of things to create_
+
+### Issues
+
+- [ ] Finish/fix issues with MinGW (can't link to libraries or something like that)
