@@ -30,7 +30,12 @@ A pocket monster type game engine and implementation using C++, Lua, and SDL.
    make
    ```
 
-_**@todo** add install target in CMake_
+1. Package and install
+
+   ```bash
+   make package
+   sudo dpkg -i morkite_0.1.0_amd64.deb # Adjust filename for platform
+   ```
 
 ### Windows
 
@@ -45,8 +50,6 @@ _**@todo** add install target in CMake_
 1. Right click `CMakeLists.txt` and click `Configure cache`
 
 1. On the ribbon, click `Build > Build All`
-
-_**@todo** add install target in CMake_
 
 #### MinGW
 
@@ -75,3 +78,73 @@ _**@todo** add install target in CMake_
    cmake ../
    ninja # @todo still doesn't work
    ```
+
+### macOS
+
+**Work in progress**
+
+## Todos
+
+### README/Documentation
+
+- [ ] Prereq instructions
+  - [x] Linux (dpkg)
+  - [ ] Linux (rpm)
+  - [ ] Linux (source)
+  - [ ] Windows (Visual Studio)
+    - [ ] Installing Visual Studio
+  - [x] Windows (MinGW)
+    - [x] Extra steps for MSYS2/MinGW?
+  - [ ] macOS (through Homebrew)
+
+### Planning
+
+_See files in [planning directory](./planning/)_
+
+- [ ] Engine specs
+  - [ ] C++ internal classes
+    - [ ] Sprite
+    - [ ] Menu
+    - [ ] Level
+    - [ ] Scene
+    - [ ] Engine
+  - [ ] Lua API
+    - [ ] Registration
+      - [ ] Images
+      - [ ] Scene
+        - [ ] Levels
+        - [ ] Menus
+        - [ ] Sprites
+    - [ ] Bindings to engine
+- [ ] Game development
+  - _**@todo** figure out steps needed once Lua API is established (stuff like sprite design, level design, etc.)_
+- [ ] Misc
+  - [ ] New engine name
+
+### CMake
+
+- [ ] Compiling
+  - [x] Linux
+  - [x] Windows
+  - [ ] macOS
+- [ ] Packaging/Installers
+  - [x] Linux (dpkg)
+  - [ ] Linux (rpm)
+  - [ ] Windows (msi in Visual Studio)
+  - [ ] Windows (exe in Visual Studio)
+  - [ ] Windows (msi in MinGW)
+  - [ ] Windows (exe in MinGW)
+  - [ ] macOS
+- [ ] Install (without package manager)
+  - [ ] Linux
+  - [ ] Windows
+  - [ ] macOS
+- [ ] Finish/fix issues with MinGW (can't link to libraries or something like that)
+
+### Engine
+
+_**@todo** make list, for now see [planning section](#planning) for list of things to implement_
+
+### Game content
+
+_**@todo** make list, for now see [planning section](#planning) for list of things to create_

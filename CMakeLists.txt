@@ -1,10 +1,13 @@
-cmake_minimum_required(VERSION 3.1...3.22) # Most up to date version on Kubuntu 22.04, lower later based on functions used
+cmake_minimum_required(VERSION 3.1...3.22) # Update later based on functions used
 project(
 	Morkite
 	VERSION 0.1.0
 	LANGUAGES CXX
 )
 
+# Extension variables
+
+# Extensions
 include(ExternalProject)
 
 # References:
@@ -97,3 +100,38 @@ if(dlls)
 		)
 	endforeach()
 endif()
+
+# Copy support files to output directory
+file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}")
+file(COPY "${CMAKE_SOURCE_DIR}/scripts" DESTINATION "${CMAKE_BINARY_DIR}")
+
+# Packaging
+if(WIN32)
+	#set(CPACK_GENERATOR "")
+	#set(EXECUTABLE_NAME "morkite")
+elseif(UNIX AND NOT APPLE)
+	set(CPACK_GENERATOR "DEB;TGZ")
+
+	set(CPACK_DEBIAN_PACKAGE_NAME "morkite")
+	set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+	set(CPACK_DEBIAN_PACKAGE_DEPENDS "lua5.4, liblua5.4-0, liblua5.4-0-dbg, liblua5.4-dev, libsdl2-2.0-0, libsdl2-dev, libsdl2-image-2.0-0, libsdl2-image-dev")
+	set(CPACK_DEBIAN_PACKAGE_MAINTAINER "scoutchorton")
+	set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Pokemon-inspired game engine")
+	set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+	set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/scoutchorton/Morkite")
+
+	set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/morkite")
+	set(EXECUTABLE_PATH "/opt/morkite/morkite")
+	set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/package/deb/postinst;${CMAKE_SOURCE_DIR}/package/deb/postrm")
+
+	install(
+		FILES "${CMAKE_SOURCE_DIR}/package/deb/morkite.sh"
+		TYPE BIN
+		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+endif()
+
+install(TARGETS morkite)
+install(DIRECTORY "${CMAKE_BINARY_DIR}/assets/" DESTINATION "assets")
+install(DIRECTORY "${CMAKE_BINARY_DIR}/scripts/" DESTINATION "scripts")
+include(CPack)

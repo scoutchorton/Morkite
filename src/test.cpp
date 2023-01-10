@@ -2,10 +2,11 @@
 
 #include "SDL.h"
 #include "SDL_image.h"
+#ifdef WIN32
 #include "lua.hpp"
-//#include "lua.h"
-//#include "lualib.h"
-//#include "lauxlib.h"
+#else
+#include <lua5.4/lua.hpp>
+#endif
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -127,7 +128,7 @@ int main(int argc, char** argv) {
 
 		// Game logic
 		if(hasRunLua == 255/4)
-			luaL_dofile(Lua, "./src/test.lua");
+			luaL_dofile(Lua, "./scripts/test.lua");
 
 		// Drawing logic
 		SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, red, 0, 0));
