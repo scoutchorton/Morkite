@@ -1,0 +1,167 @@
+cmake_minimum_required(VERSION 3.1...3.22) # Update later based on functions used
+project(
+	Morkite
+	VERSION 0.1.0
+	LANGUAGES CXX
+)
+add_executable(morkite)
+
+# Extension variables
+
+# Extensions
+include(ExternalProject)
+
+# References:
+#   http://derekmolloy.ie/hello-world-introductions-to-cmake/
+#   https://trenki2.github.io/blog/2017/07/04/using-sdl2-image-with-cmake/
+
+# Variables
+file(GLOB CPP_SOURCES "src/*.cpp")
+
+# Packages
+if(WIN32)
+	# Architecture specific values
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		set(LUA_DL_ARCH "Win64")
+		set(SDL2_ARCH "x86_64")
+	else()
+		set(LUA_DL_ARCH "Win32")
+		set(SDL2_ARCH "i686")
+	endif()
+
+	# Compiler specific values
+	if(MSVC)
+		set(SDL_WIN_TYPE "VC")
+	else()
+		set(SDL_WIN_TYPE "mingw")
+	endif()
+	# @todo add option for generic Windows download if not compiling for Visual C or MinGW
+
+	set(dlls "")
+
+	# Lua (precompiled)
+	ExternalProject_Add(lua
+		URL "https://sourceforge.net/projects/luabinaries/files/5.4.2/Windows%20Libraries/Dynamic/lua-5.4.2_${LUA_DL_ARCH}_dll16_lib.zip/download"
+		DOWNLOAD_NAME "lua-5.4.2_${LUA_DL_ARCH}_dll16_lib.zip"
+		CONFIGURE_COMMAND ""
+		BUILD_COMMAND ""
+		INSTALL_COMMAND ""
+		DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+		BUILD_BYPRODUCTS <SOURCE_DIR>/lua54.dll <SOURCE_DIR>/lua54.lib
+	)
+	ExternalProject_Get_property(lua SOURCE_DIR)
+	set(LUA_INCLUDE_DIRS "${SOURCE_DIR}/include")
+	set(LUA_LIBRARIES "${SOURCE_DIR}/lua54.lib")
+	list(APPEND dlls "${SOURCE_DIR}/lua54.dll")
+
+	# SDL2 (precompiled)
+	ExternalProject_Add(sdl2
+		URL "https://github.com/libsdl-org/SDL/releases/download/release-2.26.1/SDL2-devel-2.26.1-${SDL_WIN_TYPE}.zip"
+		CONFIGURE_COMMAND ""
+		BUILD_COMMAND ""
+		INSTALL_COMMAND ""
+		DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+		BUILD_BYPRODUCTS <SOURCE_DIR>/${SDL2_ARCH}-w64-mingw/SDL2.dll <SOURCE_DIR>/${SDL2_ARCH}-w64-mingw/SDL2.lib <SOURCE_DIR>/${SDL2_ARCH}-w64-mingw/SDL2main.lib
+	)
+
+	# SDL Image (precompiled)
+	ExternalProject_Add(sdl2_image
+		URL "https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.2/SDL2_image-devel-2.6.2-${SDL_WIN_TYPE}.zip"
+		CONFIGURE_COMMAND ""
+		BUILD_COMMAND ""
+		INSTALL_COMMAND ""
+		DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+		BUILD_BYPRODUCTS <SOURCE_DIR>/lib/${SDL2_ARCH}/SDL2_image.dll <SOURCE_DIR>/lib/${SDL2_ARCH}/SDL2_image.lib
+	)
+
+	# Handle differences between MSVC and MinGW SDL builds
+	if(MSVC)
+		ExternalProject_Get_property(sdl2 SOURCE_DIR)
+		set(SDL2_INCLUDE_DIRS "${SOURCE_DIR}/include")
+		set(SDL2_LIBRARIES "${SOURCE_DIR}/lib/${SDL2_ARCH}/SDL2.lib" "${SOURCE_DIR}/lib/${SDL2_ARCH}/SDL2main.lib")
+		list(APPEND dlls "${SOURCE_DIR}/lib/${SDL2_ARCH}/SDL2.dll")
+
+		ExternalProject_Get_property(sdl2_image SOURCE_DIR)
+		set(SDL2_IMAGE_INCLUDE_DIRS "${SOURCE_DIR}/include")
+		set(SDL2_IMAGE_LIBRARIES "${SOURCE_DIR}/lib/${SDL2_ARCH}/SDL2_image.lib")
+		list(APPEND dlls "${SOURCE_DIR}/lib/${SDL2_ARCH}/SDL2_image.dll")
+	elseif(MINGW)
+		#ExternalProject_Get_property(sdl2 SOURCE_DIR)
+		#set(SDL2_INCLUDE_DIRS "${SOURCE_DIR}/${SDL2_ARCH}-w64-mingw32/include")
+		#set(SDL2_LIBRARY "${SOURCE_DIR}/${SDL2_ARCH}-w64-mingw32/lib")
+		#set(SDL2_LIBRARIES "${SDL2_LIBRARY_DIR}/libSDL2main.a ${SDL2_LIBRARY_DIR}/libSDL2.dll.a")
+		#set(SDL2_LIBRARIES "${SOURCE_DIR}/${SDL2_ARCH}-w64-mingw32/lib/libSDL2main.a ${SOURCE_DIR}/${SDL2_ARCH}-w64-mingw32/lib/libSDL2.dll.a")
+
+		#include_directories(${SDL2_INCLUDE_DIR})
+		#target_link_libraries(morkite ${SDL2_LIBRARY_DIR}/libSDL2main.a ${SDL2_LIBRARY_DIR}/libSDL2.dll.a)
+
+		#ExternalProject_Get_property(sdl2_image SOURCE_DIR)
+		#set(SDL2_IMAGE_INCLUDE_DIRS "${SOURCE_DIR}/${SDL2_ARCH}-w64-mingw32/include")
+		#set(SDL2_IMAGE_LIBRARY_DIR "${SOURCE_DIR}/${SDL2_ARCH}-w64-mingw32/lib")
+		#set(SDL2_IMAGE_LIBRARIES "${SDL2_LIBRARY_DIR}/libSDL2main.a ${SDL2_LIBRARY_DIR}/libSDL2.dll.a")
+	endif()
+else()
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+	include("${CMAKE_SOURCE_DIR}/cmake/FindSDL2_image.cmake")
+
+	# Find libraries
+	find_package(SDL2 REQUIRED)
+	find_package(SDL2_image REQUIRED)
+	find_package(Lua 5.4 REQUIRED)
+endif()
+
+# Compile project
+if(WIN32)
+	add_dependencies(morkite lua sdl2 sdl2_image)
+endif()
+#include_directories(morkite ${LUA_INCLUDE_DIRS})
+include_directories(morkite ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${LUA_INCLUDE_DIRS})
+#target_link_libraries(morkite ${LUA_LIBRARIES})
+target_link_libraries(morkite ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${LUA_LIBRARIES})
+message("target_link_libraries(morkite ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${LUA_LIBRARIES})")
+target_sources(morkite PUBLIC ${CPP_SOURCES})
+
+# Copy DLL files to exe directory
+if(dlls)
+	foreach(dll ${dlls})
+		add_custom_command(
+			TARGET morkite
+			COMMAND ${CMAKE_COMMAND} -E copy "${dll}" "${CMAKE_BINARY_DIR}"
+		)
+	endforeach()
+endif()
+
+# Copy support files to output directory
+file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}")
+file(COPY "${CMAKE_SOURCE_DIR}/scripts" DESTINATION "${CMAKE_BINARY_DIR}")
+
+# Packaging
+if(WIN32)
+	#set(CPACK_GENERATOR "")
+	#set(EXECUTABLE_NAME "morkite")
+elseif(UNIX AND NOT APPLE)
+	set(CPACK_GENERATOR "DEB;TGZ")
+
+	set(CPACK_DEBIAN_PACKAGE_NAME "morkite")
+	set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+	set(CPACK_DEBIAN_PACKAGE_DEPENDS "lua5.4, liblua5.4-0, liblua5.4-0-dbg, liblua5.4-dev, libsdl2-2.0-0, libsdl2-dev, libsdl2-image-2.0-0, libsdl2-image-dev")
+	set(CPACK_DEBIAN_PACKAGE_MAINTAINER "scoutchorton")
+	set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Pokemon-inspired game engine")
+	set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+	set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/scoutchorton/Morkite")
+
+	set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/morkite")
+	set(EXECUTABLE_PATH "/opt/morkite/morkite")
+	set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/package/deb/postinst;${CMAKE_SOURCE_DIR}/package/deb/postrm")
+
+	install(
+		FILES "${CMAKE_SOURCE_DIR}/package/deb/morkite.sh"
+		TYPE BIN
+		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+endif()
+
+install(TARGETS morkite)
+install(DIRECTORY "${CMAKE_BINARY_DIR}/assets/" DESTINATION "assets")
+install(DIRECTORY "${CMAKE_BINARY_DIR}/scripts/" DESTINATION "scripts")
+include(CPack)
