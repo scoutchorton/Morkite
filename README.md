@@ -6,13 +6,19 @@ A pocket monster type game engine and implementation using C++, Lua, and SDL.
 
 ### Linux
 
-#### Debian/Ubuntu
-
 1. Install the prerequisite packages
+   #### Debian/Ubuntu
 
    ```bash
    sudo apt update
    sudo apt install git build-essential cmake lua5.4 liblua5.4-0 liblua5.4-0-dbg liblua5.4-dev libsdl2-2.0-0 libsdl2-dev libsdl2-image-2.0-0 libsdl2-image-dev
+   ```
+
+   #### Arch
+
+   ```bash
+   sudo pacman -Syy
+   sudo pacman -S cmake lua sdl2 sdl2_image base-devel git
    ```
 
 1. Clone the repository
@@ -26,6 +32,7 @@ A pocket monster type game engine and implementation using C++, Lua, and SDL.
 
    ```bash
    mkdir build
+   cd build
    cmake ../
    make
    ```
